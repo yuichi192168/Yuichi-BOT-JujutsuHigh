@@ -7,7 +7,7 @@ module.exports.config = {
   usePrefix:false,
   commandCategory: "No prefix",
   usages: "tag or none",
-  cooldowns: 1
+  cooldowns: 3
 };
 
 module.exports.run = async ({ api, event}) => {

@@ -1,9 +1,9 @@
 const axios = require('axios');
 
 module.exports.config = {
-  name: 'max',
+  name: 'aimax',
   version: '1.0',
-  hasPermssion: 0,
+  hasPermssion: 2,
   credits: 'Max',
   description: 'An AI command!',
   usePrefix: true,

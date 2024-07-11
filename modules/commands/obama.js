@@ -1,7 +1,7 @@
 module.exports.config = {
   name: "obama",
   version: "1.0.1",
-  hasPermssion: 2,
+  hasPermssion: 0,
   credits: "omseks",
   description: "Obama Tweet post",
   commandCategory: "Edit-IMG",

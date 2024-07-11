@@ -1,17 +1,17 @@
 module.exports.config = {
   name: "help",
   version: "1.0.2",
-  hasPermission: 0,
+  hasPermssion: 2, 
   credits: "Mirai Team & Mod by Max Spencer",
   description: "Beginner's Guide",
   usePrefix: true,
   commandCategory: "system",
   usages: "[Shows Commands]",
-  cooldowns: 5,
+  cooldown: 5,
   envConfig: {
-		autoUnsend: true,
-		delayUnsend: 1
-	}
+    autoUnsend: true,
+    delayUnsend: 3
+  }
 };
 
 module.exports.languages = {
@@ -28,10 +28,9 @@ module.exports.languages = {
   },
 };
 
-
 module.exports.handleEvent = function ({ api, event, getText }) {
   const { commands } = global.client;
-  const { threadID, messageID, body } = event;  
+  const { threadID, messageID, body } = event;
 
   if (!body || typeof body == "undefined" || body.indexOf("help") != 0)
     return;
@@ -51,10 +50,10 @@ module.exports.handleEvent = function ({ api, event, getText }) {
         command.config.usages ? command.config.usages : ""
       }`,
       command.config.commandCategory,
-      command.config.cooldowns,
-      command.config.hasPermission === 0
+      command.config.cooldown,
+      command.config.hasPermissions === 0
         ? getText("user")
-        : command.config.hasPermission === 1
+        : command.config.hasPermissions === 1
         ? getText("adminGroup")
         : getText("adminBot"),
       command.config.credits
@@ -69,7 +68,7 @@ module.exports.run = async function ({ api, event, args, getText }) {
   const { threadID, messageID } = event;
   const command = commands.get((args[0] || "").toLowerCase());
   const threadSetting = global.data.threadData.get(parseInt(threadID)) || {};
-  const { autoUnsend, delayUnsend } = global.configModule[this.config.name];
+  const { autoUnsend, delayUnsend } = module.exports.config.envConfig; // Access config properly
   const prefix = threadSetting.hasOwnProperty("PREFIX")
     ? threadSetting.PREFIX
     : global.config.PREFIX;
@@ -137,37 +136,11 @@ module.exports.run = async function ({ api, event, args, getText }) {
     } \n`;
     msg += getText("helpList", commands.size, categoryCount, prefix);
 
-    const axios = require("axios");
-    const fs = require("fs-extra");
-    const imgP = [];
-    const img = [
-      "https://i.imgur.com/KpXKxzK.jpg",
-      "https://i.imgur.com/uA0zfpU.jpg",
-      "https://i.imgur.com/IwjRGr6.jpg",
-      "https://i.imgur.com/w3lnGA8.jpg",
-      "https://i.imgur.com/Gxunvp0.jpg"
-    ];
-    const path = __dirname + "/cache/menu.png";
-    const rdimg = img[Math.floor(Math.random() * img.length)];
-
-    const { data } = await axios.get(rdimg, {
-      responseType: "arraybuffer",
-    });
-
-    fs.writeFileSync(path, Buffer.from(data, "utf-8"));
-    imgP.push(fs.createReadStream(path));
-    const config = require("./../../config.json")
-    const msgg = {
-  body: `\nBot Owner: ${config.DESIGN.Admin}\nPrefix: › / ‹\n` + msg + `\nTotal pages available: ${totalPages}.\n` + `\n GUIDE \n` + getText("guideList", config.PREFIX),
-  attachment: imgP,
-};
-    const sentMessage = await api.sendMessage(msgg, threadID, messageID);
-
-    if (autoUnsend) {
-      setTimeout(async () => {
-        await api.unsendMessage(sentMessage.messageID);
-      }, delayUnsend * 1000);
-    }
+    return api.sendMessage(
+      msg,
+      threadID,
+      messageID
+    );
   } else {
     return api.sendMessage(
       getText(
@@ -178,10 +151,10 @@ module.exports.run = async function ({ api, event, args, getText }) {
           command.config.usages ? command.config.usages : ""
         }`,
         command.config.commandCategory,
-        command.config.cooldowns,
-        command.config.hasPermission === 0
+        command.config.cooldown,
+        command.config.hasPermissions === 0
           ? getText("user")
-          : command.config.hasPermission === 1
+          : command.config.hasPermissions === 1
           ? getText("adminGroup")
           : getText("adminBot"),
         command.config.credits

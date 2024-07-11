@@ -8,7 +8,7 @@ module.exports = {
     usePrefix: false,
     commandCategory: "No prefix",
     usages: "response",
-    cooldowns: 0,
+    cooldowns: 3,
   },
 
   run: async function ({ api, event }) {

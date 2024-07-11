@@ -1,7 +1,7 @@
 module.exports.config = {
   name: "zuck",
   version: "1.0.1",
-  hasPermssion: 2,
+  hasPermssion: 0,
   credits: "Tiadals",
   description: "Comment on the board ( ͡° ͜ʖ ͡°)",
   usePrefix: true,

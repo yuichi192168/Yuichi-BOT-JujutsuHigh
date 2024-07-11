@@ -11,7 +11,7 @@ module.exports = {
     usePrefix: false,
     commandCategory: "No prefix",
     usages: "kiss",
-    cooldowns: 0,
+    cooldowns: 3,
   },
 
   run: async function ({ api, event }) {

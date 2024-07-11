@@ -15,7 +15,7 @@ module.exports.config = {
   name: 'ia',
   version: '2.1.3',
   hasPermission: 0,
-  credits: 'Max (API by Hazeyy Wu)',
+  credits: 'Max',
   usePrefix: true,
   description: '(Image to text)',
   commandCategory: 'ai',

@@ -6,7 +6,7 @@ module.exports.config = {
   usePrefix:true,
   description: "user facebookID",
   commandCategory: "system",
-  cooldowns: 0
+  cooldowns: 3
    };
 
    module.exports.run = async function({ api, event, args }) {

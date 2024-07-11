@@ -12,21 +12,21 @@
     "EMAIL": "",
     "PASSWORD": "",
     "OTPKEY": "",
-    "BOTNAME": "Yuichi",
+    "BOTNAME": "Max",
     "PREFIX": "/",
     "ADMINBOT": [
-        "100029276150511",
-        "61555839112947",
+        "100058837502078",
+        "",
         "100055084791819",
-        "100082079415194",
-        ""
+        "",
+        "100029276150511"
     ],
     "DESIGN": {
-        "Title": "Yuichi",
+        "Title": "Max",
         "Theme": "Aqua",
-        "Admin": "Max Spencer",
+        "Admin": "Max",
         "Setup": {
-            "Title": "Yuichi Katagiri",
+            "Title": "Max",
             "Theme": "Aqua"
         }
     },
@@ -53,7 +53,7 @@
     },
     "help": {
         "autoUnsend": true,
-        "delayUnsend": 1
+        "delayUnsend": 3
     },
     "adminUpdate": {
         "autoUnsend": true,

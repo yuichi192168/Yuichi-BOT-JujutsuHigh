@@ -7,7 +7,7 @@ module.exports.config = {
   usePrefix: true,
   commandCategory: "Edit-IMG",
   usages: "text 1 | text 2",
-  cooldowns: 2
+  cooldowns: 3
 };
 
 module.exports.wrapText = (ctx, text, maxWidth) => {

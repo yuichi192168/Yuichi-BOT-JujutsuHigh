@@ -6,7 +6,7 @@ const logger = (message, mode) => {
 module.exports.config = {
   name: 'yui2',
   version: '1.0',
-  hasPermssion: 0,
+  hasPermssion: 2,
   credits: 'Max',
   description: 'An AI command!',
   usePrefix: true,

@@ -57,6 +57,7 @@ module.exports = {
 
         // Send the message with the meme image
         setTimeout(() => {
+          
         api.sendMessage(message, event.threadID);
         }, 5000); 
         console.log(`Sent meme in response to: ${matchedWords.join(', ')}`);

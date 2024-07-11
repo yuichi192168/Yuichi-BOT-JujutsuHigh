@@ -4,7 +4,7 @@ const { loadImage, createCanvas } = require('canvas');
 module.exports.config = {
   name: "billboard",
   version: "9.7.5",
-  hasPermssion: 2,
+  hasPermssion: 0,
   credits: "John Lester",
   description: "billboard",
   usePrefix: true,

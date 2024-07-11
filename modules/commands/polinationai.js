@@ -2,7 +2,7 @@ module.exports.config = {
   name: "poli",
   version: "1.0.",
   hasPermssion: 0,
-  credits: "jameslim",
+  credits: "Max",
   description: "generate image from polination",
   usePrefix: true,
   commandCategory: "ai",
@@ -22,6 +22,6 @@ let path = __dirname + `/cache/poli.png`;
   })).data;
   fs.writeFileSync(path, Buffer.from(poli, "utf-8"));
   api.sendMessage({
-    body: `Here is what I Generated...`,
+    body: `oh ayan na`,
     attachment: fs.createReadStream(path) }, threadID, () => fs.unlinkSync(path), messageID);
 };

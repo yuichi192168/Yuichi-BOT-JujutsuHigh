@@ -1,13 +1,18 @@
+const request = require("request");
+const axios = require("axios");
+const { writeFileSync, createReadStream } = require("fs-extra");
+const path = require("path");
+
 module.exports.config = {
   name: "resend",
   version: "2.0.0",
-  hasPermssion: 1,
+  hasPermssion: 0,
   credits: "Thọ & Mod By DuyVuong",
   description: "Resends Messages",
   usePrefix: true,
   commandCategory: "System",
   usages: "resend",
-  cooldowns: 0,
+  cooldowns: 3,
   hide: true,
   dependencies: {
     request: "",
@@ -17,50 +22,49 @@ module.exports.config = {
 };
 
 module.exports.handleEvent = async function ({ event, api, client, Users }) {
-  const request = global.nodemodule["request"];
-  const axios = global.nodemodule["axios"];
-  const { writeFileSync, createReadStream } = global.nodemodule["fs-extra"];
   let { messageID, senderID, threadID, body: content } = event;
   if (!global.logMessage) global.logMessage = new Map();
-  if (!global.data.botID) global.data.botID = api.getCurrentUserID();
+  if (!global.data.botID) global.data.botID = await api.getCurrentUserID();
 
   const thread = global.data.threadData.get(parseInt(threadID)) || {};
 
-  if (typeof thread["resend"] != "undefined" && thread["resend"] == false) return;
   if (senderID == global.data.botID) return;
 
-  if (event.type != "message_unsend") global.logMessage.set(messageID, {
-    msgBody: content,
-    attachment: event.attachments
-  });
-  if (event.type == "message_unsend") {
-    var getMsg = global.logMessage.get(messageID);
+  if (event.type !== "message_unsend") {
+    global.logMessage.set(messageID, {
+      msgBody: content,
+      attachment: event.attachments
+    });
+  } else {
+    const getMsg = global.logMessage.get(messageID);
     if (!getMsg) return;
     let name = await Users.getNameUser(senderID);
-    if (getMsg.attachment[0] == undefined) {
-      // Send the "unsint a missage" message after a 10-second delay
+
+    if (!getMsg.attachment[0]) {
       setTimeout(() => {
-        api.sendMessage(`${name} unsint a missage \n\nPossible reasons: nagsilos, may nakita, nabasa ng loha, naghost, iniwan, pinagpalit, xsend, may nalaman\n\nContent: ${getMsg.msgBody}`, threadID);
+        api.sendMessage(`${name} unsent a message \n\nPossible reasons: nagsilos, may nakita, nabasa ng loha, naghost, iniwan, pinagpalit, xsend, may nalaman\n\nContent: ${getMsg.msgBody}`, threadID);
       }, 10000);
     } else {
       let num = 0;
       let msg = {
-        body: `${name} unsint a missage \n${getMsg.attachment.length} Attachments${(getMsg.msgBody != "") ? `\n\nContent: ${getMsg.msgBody}` : ""}`,
+        body: `${name} unsent a message \n${getMsg.attachment.length} Attachments${getMsg.msgBody ? `\n\nContent: ${getMsg.msgBody}` : ""}`,
         attachment: [],
-        mentions: { tag: name, id: senderID }
+        mentions: [{ tag: name, id: senderID }]
       };
-      for (var i of getMsg.attachment) {
+
+      for (let i of getMsg.attachment) {
         num += 1;
-        var getURL = await request.get(i.url);
-        var pathname = getURL.uri.pathname;
-        var ext = pathname.substring(pathname.lastIndexOf(".") + 1);
-        var path = __dirname + `/cache/${num}.${ext}`;
-        var data = (await axios.get(i.url, { responseType: 'arraybuffer' })).data;
-        writeFileSync(path, Buffer.from(data, "utf-8"));
-        msg.attachment.push(createReadStream(path));
+        try {
+          const { data } = await axios.get(i.url, { responseType: 'arraybuffer' });
+          const ext = path.extname(i.url);
+          const filePath = path.join(__dirname, `/cache/${num}${ext}`);
+          writeFileSync(filePath, Buffer.from(data, "utf-8"));
+          msg.attachment.push(createReadStream(filePath));
+        } catch (error) {
+          console.error(`Error downloading attachment: ${error}`);
+        }
       }
 
-      // Add a 10-second delay before sending the message
       setTimeout(() => {
         api.sendMessage(msg, threadID);
       }, 10000);
@@ -70,14 +74,12 @@ module.exports.handleEvent = async function ({ event, api, client, Users }) {
 
 module.exports.run = async function ({ api, event, Threads }) {
   const { threadID, messageID } = event;
+  const data = (await Threads.getData(threadID)).data;
 
-  var data = (await Threads.getData(threadID)).data;
-
-  if (typeof data["resend"] == "undefined" || data["resend"] == false) data["resend"] = true;
-  else data["resend"] = false;
+  data["resend"] = true;
 
   await Threads.setData(parseInt(threadID), { data });
   global.data.threadData.set(parseInt(threadID), data);
 
-  return api.sendMessage(`is already ${(data["resend"] == true) ? "turn on" : "Turn off"} successfully!`, threadID, messageID);
+  return api.sendMessage(`Resend is now enabled successfully!`, threadID, messageID);
 };

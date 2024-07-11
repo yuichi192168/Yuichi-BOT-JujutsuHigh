@@ -3,7 +3,7 @@
 module.exports.config = {
   name: 'yui',
   version: '1.0',
-  hasPermssion: 0,
+  hasPermssion: 2,
   credits: 'Max',
   description: 'An AI command!',
   usePrefix: true,

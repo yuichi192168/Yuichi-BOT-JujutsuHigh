@@ -1,7 +1,7 @@
 module.exports.config = {
   name: "jessica",
   version: "3.1.1",
-  hasPermssion: 2,
+  hasPermssion: 0,
   credits: "John Lester",
   description: "Comment on the board",
   usePrefix: true,
