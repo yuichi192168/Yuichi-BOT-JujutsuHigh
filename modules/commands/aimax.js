@@ -1,107 +1,108 @@
 const axios = require('axios');
 
-const services = [
-  { url: 'https://markdevs-last-api.onrender.com/api/v3/gpt4', param: { ask: 'ask' } }
-];
+let lastResponseMessageID = null;
 
-async function callService(service, prompt, senderID) {
-  try {
-    const params = {};
-    for (const [key, value] of Object.entries(service.param)) {
-      params[key] = key === 'uid' ? senderID : encodeURIComponent(prompt);
+async function handleCommand(api, event, args) {
+    try {
+        const question = args.join(" ").trim();
+
+        if (!question) {
+            return api.sendMessage("Please provide a question to get an answer.", event.threadID, event.messageID);
+        }
+
+        const { response, messageID } = await getAIResponse(question, event.senderID, event.messageID);
+        lastResponseMessageID = messageID;
+
+        api.sendMessage(response, event.threadID, messageID);
+    } catch (error) {
+        console.error("Error in handleCommand:", error.message);
+        api.sendMessage("An error occurred while processing your request.", event.threadID, event.messageID);
     }
-    const queryString = new URLSearchParams(params).toString();
-    const response = await axios.get(`${service.url}?${queryString}`);
-    return response.data.answer || response.data;
-  } catch (error) {
-    console.error(`Service error from ${service.url}: ${error.message}`);
-    throw new Error(`Error from ${service.url}: ${error.message}`);
-  }
 }
 
-async function getFastestValidAnswer(prompt, senderID) {
-  const promises = services.map(service => callService(service, prompt, senderID));
-  const results = await Promise.allSettled(promises);
-  for (const result of results) {
-    if (result.status === 'fulfilled' && result.value) {
-      return result.value;
+async function getAnswerFromAI(question) {
+    try {
+        const services = [
+            { url: 'https://markdevs-last-api.onrender.com/gpt4', params: { prompt: question, uid: '100058837502078' } },
+            { url: 'http://markdevs-last-api.onrender.com/api/v2/gpt4', params: { query: question } },
+            { url: 'https://markdevs-last-api.onrender.com/api/v3/gpt4', params: { ask: question } }
+        ];
+
+        for (const service of services) {
+            const data = await fetchFromAI(service.url, service.params);
+            if (data) return data;
+        }
+
+        throw new Error("No valid response from any AI service");
+    } catch (error) {
+        console.error("Error in getAnswerFromAI:", error.message);
+        throw new Error("Failed to get AI response");
     }
-  }
-  throw new Error('All services failed to provide a valid answer');
 }
 
-const ArYAN = ['ai', '-ai'];
+async function fetchFromAI(url, params) {
+    try {
+        const { data } = await axios.get(url, { params });
+        if (data && (data.gpt4 || data.reply || data.response || data.answer || data.message)) {
+            const response = data.gpt4 || data.reply || data.response || data.answer || data.message;
+            console.log("AI Response:", response);
+            return response;
+        } else {
+            throw new Error("No valid response from AI");
+        }
+    } catch (error) {
+        console.error("Network Error:", error.message);
+        return null;
+    }
+}
+
+async function getAIResponse(input, userId, messageID) {
+    const query = input.trim() || "hi";
+    try {
+        const response = await getAnswerFromAI(query);
+        return { response, messageID };
+    } catch (error) {
+        console.error("Error in getAIResponse:", error.message);
+        throw error;
+    }
+}
 
 module.exports = {
-  config: {
-    name: 'aimax',
-    version: '1.0',
-    hasPermssion: 0,
-    credits: 'Max',
-    description: 'An AI command!',
-    usePrefix: false,
-    commandCategory: 'ai',
-    usages: '[prompt]',
-    cooldowns: 5,
-  },
-
-  onStart: async function () {
-    // Empty onStart function
-  },
-
-  onChat: async function ({ api, event, args, getLang, message }) {
-    try {
-      const prefix = ArYAN.find(p => event.body && event.body.toLowerCase().startsWith(p));
-      let prompt;
-
-      // Check if the user is replying to a bot message
-      if (event.type === 'message_reply') {
-        const replyMessage = event.messageReply;
-
-        // Check if the bot's original message starts with the header
-        if (replyMessage.body && replyMessage.body.startsWith(getLang("header"))) {
-          // Extract the user's reply from the event
-          prompt = event.body.trim();
-
-          // Combine the user's reply with the bot's original message
-          prompt = `${replyMessage.body}\n\nUser reply: ${prompt}`;
-        } else {
-          // If the bot's original message doesn't start with the header, return
-          return;
+    config: {
+        name: 'ai',
+        version: '1.0',
+        hasPermssion: 0,
+        usePrefix:false,
+        credits: 'coffee',
+        description: 'An AI command!',
+        commandCategory: 'ai',
+        usages: '[prompt]',
+        cooldowns: 0
+    },
+    run: async function({ api, event, args }) {
+        const input = args.join(' ').trim();
+        try {
+            const { response, messageID } = await getAIResponse(input, event.senderID, event.messageID);
+            lastResponseMessageID = messageID;
+            api.sendMessage(response, event.threadID, messageID);
+        } catch (error) {
+            console.error("Error in run:", error.message);
+            api.sendMessage("An error occurred while processing your request.", event.threadID, event.messageID);
         }
-      } else if (prefix) {
-        prompt = event.body.substring(prefix.length).trim() || 'hello';
-      } else {
-        return;
-      }
+    },
+    handleEvent: async function({ event, api }) {
+        const messageContent = event.body.trim().toLowerCase();
 
-      if (prompt === 'hello') {
-        const greetingMessage = `${getLang("header")}\nHello! How can I assist you today?\n${getLang("footer")}`;
-        api.sendMessage(greetingMessage, event.threadID, event.messageID);
-        console.log('Sent greeting message as a reply to user');
-        return;
-      }
-
-      try {
-        const fastestAnswer = await getFastestValidAnswer(prompt, event.senderID);
-        const finalMsg = `${getLang("header")}\n${fastestAnswer}\n${getLang("footer")}`;
-        api.sendMessage(finalMsg, event.threadID, event.messageID);
-        console.log('Sent answer as a reply to user');
-      } catch (error) {
-        console.error(`Failed to get answer: ${error.message}`);
-        api.sendMessage(
-          `${error.message}.`,
-          event.threadID,
-          event.messageID
-        );
-      }
-    } catch (error) {
-      console.error(`Failed to process chat: ${error.message}`);
-      api.sendMessage(
-        `${error.message}.`,
-        event.threadID,
-        event.messageID
-      );
+        if ((event.messageReply && event.messageReply.senderID === api.getCurrentUserID()) || (messageContent.startsWith("ai") && event.senderID !== api.getCurrentUserID())) {
+            const input = messageContent.replace(/^ai\s*/, "").trim();
+            try {
+                const { response, messageID } = await getAIResponse(input, event.senderID, event.messageID);
+                lastResponseMessageID = messageID;
+                api.sendMessage(response, event.threadID, messageID);
+            } catch (error) {
+                console.error("Error in handleEvent:", error.message);
+                api.sendMessage("An error occurred while processing your request.", event.threadID, event.messageID);
+            }
+        }
     }
-  }
 };
