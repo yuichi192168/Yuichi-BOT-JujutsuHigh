@@ -1,5 +1,5 @@
 module.exports.config = {
-    name: "uptime",
+    name: "up",
     version: "1.0.1",
     hasPermission: 0,
     credits: "Mirai Team",
