@@ -5,7 +5,7 @@ const logger = require("./utils/log.js");
 const path = require('path');
 const net = require('net');
 
-const PORT = 3002; // Choose a fixed port number (e.g., 3002)
+const PORT = 2002; // Choose a fixed port number (e.g., 3002)
 
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, '/includes/login/cover/index.html'));
