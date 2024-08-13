@@ -35,9 +35,9 @@ async function handleCommand(api, event, args) {
 async function getAnswerFromAI(question) {
     try {
         const services = [
-            { url: 'https://markdevs-last-api.onrender.com/gpt4', params: { prompt: question, uid: '100058837502078' } },
-            { url: 'http://markdevs-last-api.onrender.com/api/v2/gpt4', params: { query: question } },
-            { url: 'http://fi5.bot-hosting.net:20538/api/gpt4', params: { query: question } },
+            // { url: 'https://markdevs-last-api.onrender.com/gpt4', params: { prompt: question, uid: '100058837502078' } },
+            // { url: 'http://markdevs-last-api.onrender.com/api/v2/gpt4', params: { query: question } },
+            // { url: 'http://fi5.bot-hosting.net:20538/api/gpt4', params: { query: question } },
             { url: 'https://markdevs-last-api.onrender.com/api/v3/gpt4', params: { ask: question } }
         ];
 
