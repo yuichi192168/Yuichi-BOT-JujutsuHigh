@@ -120,7 +120,7 @@ module.exports.run = async function ({ api, event, args, getText }) {
       ];
       msg += ` ${numberFont[i]} ${
         category.charAt(0).toUpperCase() + category.slice(1)
-      }\n → ${commandNames.join(", ")}\n`;
+      }\n ${commandNames.join(", ")}\n`;
     }
 
     const numberFontPage = [
