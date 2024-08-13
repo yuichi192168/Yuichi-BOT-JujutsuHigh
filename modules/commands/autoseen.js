@@ -8,7 +8,7 @@ module.exports.config = {
   credits: "max Spencer",
   description: "Turn on/off automatically seen when new messages are available",
   usePrefix: true,
-  commandCategory: "No prefix",
+  commandCategory: "system",
   usages: "on/off",
   cooldowns: 5,
 };
