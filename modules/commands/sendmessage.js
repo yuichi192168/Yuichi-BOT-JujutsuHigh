@@ -5,7 +5,7 @@ module.exports.config = {
     credits: "Max Spencer",
     description: "Sends a message to all groups and can only be done by the admin.",
     usePrefix: true,
-    commandCategory: "admin",
+    commandCategory: "system",
     usages: "[Text]",
     cooldowns: 5
 };
