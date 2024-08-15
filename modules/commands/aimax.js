@@ -57,16 +57,16 @@ async function fetchFromAI(url, params) {
     }
 }
 
-async function getAIResponse(input, userId, messageID) {
-    const query = input.trim() || "hi";
-    try {
-        const response = await getAnswerFromAI(query);
-        return { response, messageID };
-    } catch (error) {
-        console.error("Error in getAIResponse:", error.message);
-        throw error;
-    }
-}
+// async function getAIResponse(input, userId, messageID) {
+//     const query = input.trim() || "hi";
+//     try {
+//         const response = await getAnswerFromAI(query);
+//         return { response, messageID };
+//     } catch (error) {
+//         console.error("Error in getAIResponse:", error.message);
+//         throw error;
+//     }
+// }
 
 module.exports = {
     config: {
