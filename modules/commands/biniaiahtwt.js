@@ -8,7 +8,7 @@ module.exports.config = {
   usePrefix: true,
   commandCategory: "Edit-IMG",
   usages: "aiah [text]",
-  cooldowns: 10,
+  cooldowns: 10,  
   dependencies: {
     "canvas":"",
      "axios":"",
