@@ -5,7 +5,7 @@ module.exports.config = {
     credits: "Max Spencer",
     description: "List groups and send a message to a chosen group.",
     usePrefix: true,
-    commandCategory: "admin",
+    commandCategory: "system",
     usages: "[list|send] [Text]",
     cooldowns: 5
 };
